@@ -15213,6 +15213,7 @@ do
     armpei_little_vec)		tb="$tb pei-arm.lo peigen.lo cofflink.lo " ;;
     b_out_vec_big_host)		tb="$tb bout.lo aout32.lo" ;;
     b_out_vec_little_host)	tb="$tb bout.lo aout32.lo" ;;
+    bfd_coff2_tic6x_coff_le_vec) tb="$tb coff-tic6x.lo" ;;
     bfd_pei_ia64_vec)		tb="$tb pei-ia64.lo pepigen.lo cofflink.lo"; target_size=64 ;;
     bfd_elf32_am33lin_vec)	tb="$tb elf32-am33lin.lo elf32.lo $elf" ;;
     bfd_elf32_avr_vec)		tb="$tb elf32-avr.lo elf32.lo $elf" ;;
