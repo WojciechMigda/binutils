@@ -827,4 +827,27 @@ struct internal_reloc
 
 #define R_W65_DP       10  /* direct page 8 bits only   */
 
+/* TI C6x modes, SPRAAO8, April 2009, Table 11 */
+#define R_C60BASE      0x50
+#define R_C60DIR15     0x51
+#define R_C60PCR21     0x52
+#define R_C60PCR10     0x53
+#define R_C60LO16      0x54
+#define R_C60HI16      0x55
+#define R_C60SECT      0x56
+#define R_C60S16       0x57
+#define R_C60PCR7      0x70
+#define R_C60PCR12     0x71
+
+/* TI generic modes, SPRAAO8, April 2009, Table 10 */
+#define R_TI_ADD       0x4000
+#define R_TI_SUB       0x4001
+#define R_TI_SR        0x4006
+#define R_TI_AND       0x4009
+#define R_TI_USTFLD    0x400F
+#define R_TI_SSTFLD    0x4010
+#define R_TI_PUSH      0x4011
+#define R_TI_PUSHUK    0x4013
+/* end TI C6x */
+
 #endif /* GNU_COFF_INTERNAL_H */
