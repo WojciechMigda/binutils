@@ -112,20 +112,31 @@ tic6x_relocation(
 
 reloc_howto_type tic6x_howto_table[] =
 {
+    HOWTO(R_RELBYTE,     0,  2,  8, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "RELBYTE",   TRUE, 0x0000ffff, 0x000000ff, FALSE),
     HOWTO(R_RELWORD,	 0,  2, 16, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "RELWORD",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-    HOWTO(R_REL24,	 0,  2, 24, FALSE, 0, complain_overflow_bitfield, tic6x_relocation, "REL24",     TRUE, 0x00ffffff, 0x00ffffff, FALSE),
     HOWTO(R_RELLONG,	 0,  2, 32, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "RELLONG",   TRUE, 0xffffffff, 0xffffffff, FALSE),
-    HOWTO(R_PCRWORD,	 0,  2, 16, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "PCRWORD",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-    HOWTO(R_PCR24,	 0,  2, 24, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "PCR24",     TRUE, 0x00ffffff, 0x00ffffff, FALSE),
-    HOWTO(R_PARTLS16,	 0,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "PARTLS16",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-    HOWTO(R_PARTMS8,	16,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "PARTMS8",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-    HOWTO(R_RELWORD,	 0,  2, 16, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "ARELWORD",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-    HOWTO(R_REL24,	 0,  2, 24, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "AREL24",    TRUE, 0x00ffffff, 0x00ffffff, FALSE),
-    HOWTO(R_RELLONG,	 0,  2, 32, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "ARELLONG",  TRUE, 0xffffffff, 0xffffffff, FALSE),
-    HOWTO(R_PCRWORD,	 0,  2, 16, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "APCRWORD",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-    HOWTO(R_PCR24,	 0,  2, 24, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "APCR24",    TRUE, 0x00ffffff, 0x00ffffff, FALSE),
-    HOWTO(R_PARTLS16,	 0,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "APARTLS16", TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-    HOWTO(R_PARTMS8,	16,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "APARTMS8",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    /* taken from http://mailman.tu-chemnitz.de/pipermail/gcc-c6x/attachments/20090105/d15f1447/attachment.pl */
+    /* Elf: R_C6000_SBR_U15_B */
+    HOWTO(R_C60BASE,     0,  2, 15, FALSE,  8, complain_overflow_unsigned, tic6x_relocation, "C60BASE",   TRUE, 0x007fff00, 0x007fff00, FALSE),
+    /* Elf: R_C6000_ABS_L16 */
+//    HOWTO(R_C60DIR15,    0,  2, 16, FALSE,  7, complain_overflow_dont,     tic6x_relocation, "C60DIR15",  TRUE, 0x003fffc0, 0x003fffc0, FALSE), // ???
+    /* Elf: R_C6000_PCR_S21 */
+    HOWTO(R_C60PCR21,    2,  2, 21, TRUE,   7, complain_overflow_signed,   tic6x_relocation, "C60PCR21",  TRUE, 0x0fffff80, 0x0fffff80, FALSE),
+//    HOWTO( R_C60PCR10,   2,  2, 10, TRUE,  13, complain_overflow_signed,   tic6x_relocation, "C60PCR10",  TRUE, 0x007fe000, 0x007fe000, FALSE),
+    /* Elf: R_C6000_ABS_L16 */
+    HOWTO( R_C60LO16,    0,  2, 16, FALSE,  7, complain_overflow_dont,     tic6x_relocation, "C60LO16",   TRUE, 0x007fff80, 0x007fff80, FALSE),
+    /* Elf: R_C6000_ABS_H16 */
+    HOWTO( R_C60HI16,   16,  2, 16, FALSE,  7, complain_overflow_dont,     tic6x_relocation, "C60HI16",   TRUE, 0x007fff80, 0x007fff80, FALSE),
+//    HOWTO( R_C60SECT,    0,  2, 16, FALSE,  7, complain_overflow_dont,     tic6x_relocation, "C60SECT",   TRUE, 0x003fffc0, 0x003fffc0, FALSE), // ???
+    /* Elf: R_C6000_ABS_S16 */
+    HOWTO( R_C60S16,     0,  2, 16, FALSE,  7, complain_overflow_signed,   tic6x_relocation, "C60S16",    TRUE, 0x007fff80, 0x007fff80, FALSE),
+//    HOWTO( R_C60PCR7,    2,  2,  7, TRUE,  16, complain_overflow_signed,   tic6x_relocation, "C60PCR7",   TRUE, 0x007f0000, 0x007f0000, FALSE),
+//    HOWTO( R_C60PCR12,   2,  2, 12, TRUE,  16, complain_overflow_signed,   tic6x_relocation, "C60PCR12",  TRUE, 0x0fff0000, 0x0fff0000, FALSE),
+    HOWTO(R_TI_AND,    0,  0,  0, FALSE,  0, complain_overflow_dont,     tic6x_relocation, "TI_AND",  TRUE, 0x0, 0x0, FALSE),
+    HOWTO(R_TI_SR,     0,  0,  0, FALSE,  0, complain_overflow_dont,     tic6x_relocation, "TI_SR",  TRUE, 0x0, 0x0, FALSE),
+    HOWTO(R_TI_USTFLD, 0,  0,  0, FALSE,  0, complain_overflow_dont,     tic6x_relocation, "TI_USTFLD",  TRUE, 0x0, 0x0, FALSE),
+    HOWTO(R_TI_PUSH,   0,  0,  0, FALSE,  0, complain_overflow_dont,     tic6x_relocation, "TI_PUSH",  TRUE, 0x0, 0x0, FALSE),
+    HOWTO(R_TI_PUSHUK, 0,  0,  0, FALSE,  0, complain_overflow_dont,     tic6x_relocation, "TI_PUSHUK",  TRUE, 0x0, 0x0, FALSE),
 };
 #define HOWTO_SIZE (sizeof(tic6x_howto_table) / sizeof(tic6x_howto_table[0]))
 
@@ -148,12 +159,12 @@ tic6x_coff_reloc_type_lookup(
     switch (code)
     {
         case BFD_RELOC_32:		type = R_RELLONG; break;
-        case BFD_RELOC_24:		type = R_REL24; break;
+//        case BFD_RELOC_24:		type = R_REL24; break;
         case BFD_RELOC_16:		type = R_RELWORD; break;
-        case BFD_RELOC_24_PCREL:	type = R_PCR24; break;
-        case BFD_RELOC_16_PCREL:	type = R_PCRWORD; break;
-        case BFD_RELOC_HI16:	type = R_PARTMS8; break;
-        case BFD_RELOC_LO16:	type = R_PARTLS16; break;
+//        case BFD_RELOC_24_PCREL:	type = R_PCR24; break;
+//        case BFD_RELOC_16_PCREL:	type = R_PCRWORD; break;
+//        case BFD_RELOC_HI16:	type = R_PARTMS8; break;
+//        case BFD_RELOC_LO16:	type = R_PARTLS16; break;
         default:
             return NULL;
     }
