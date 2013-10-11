@@ -1,6 +1,7 @@
-/* BFD back-end for TMS320C6x coff binaries.
-   Copyright 2013
-   Free Software Foundation, Inc.
+/* BFD back-end for TMS320C6X coff binaries.
+   Copyright 1996, 1997, 1998, 1999, 2000, 2002, 2003, 2005, 2007,
+   2008, 2012, 2013  Free Software Foundation, Inc.
+
    Contributed by Wojciech Migda
 
    This file is part of BFD, the Binary File Descriptor library.
@@ -23,59 +24,177 @@
 #include "sysdep.h"
 #include "bfd.h"
 #include "libbfd.h"
-
+#include "bfdlink.h"
+#include "coff/tic6x.h"
 #include "coff/internal.h"
 #include "libcoff.h"
 
-#define TI_TARGET_ID 0x99
-#define TICOFF_TARGET_ARCH bfd_arch_tic6x
-#define OCTETS_PER_BYTE_POWER   2
+#undef  F_LSYMS
+#define	F_LSYMS		F_LSYMS_TICOFF
 
-#include "coff/ti.h"
-
-#define BADMAG(x) COFF2_BADMAG(x)
-#define RELOC_PROCESSING(relent,reloc,symbols,abfd,section) \
- tic6x_reloc_processing(relent, reloc, symbols, abfd, section)
+static reloc_howto_type *
+coff_tic6x_rtype_to_howto(
+    bfd *,
+    asection *,
+    struct internal_reloc *,
+    struct coff_link_hash_entry *,
+    struct internal_syment *,
+    bfd_vma *);
 
 static void
 tic6x_reloc_processing(
-    arelent * const relent,
-    struct internal_reloc const * const reloc,
-    asymbol ** const symbols,
-    bfd * const abfd,
-    asection const * const section);
+    arelent *,
+    struct internal_reloc *,
+    asymbol **,
+    bfd *,
+    asection *);
+
+/* Replace the stock _bfd_coff_is_local_label_name to recognize TI COFF local
+ * labels.  */
+static bfd_boolean
+ticoff_bfd_is_local_label_name(
+    bfd *abfd ATTRIBUTE_UNUSED,
+    const char *name)
+{
+    if (TICOFF_LOCAL_LABEL_P(name))
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
+}
+
+#define coff_bfd_is_local_label_name ticoff_bfd_is_local_label_name
+
+#define RELOC_PROCESSING(RELENT,RELOC,SYMS,ABFD,SECT)\
+ tic6x_reloc_processing (RELENT,RELOC,SYMS,ABFD,SECT)
+
+/* Customize coffcode.h; the default coff_ functions are set up to use
+ * COFF2; coff_bad_format_hook uses BADMAG, so set that for COFF2.
+ * The COFF1 and COFF0 vectors use custom _bad_format_hook procs
+ * instead of setting BADMAG.  */
+#define BADMAG(x) COFF2_BADMAG(x)
+
+#undef  coff_rtype_to_howto
+#define coff_rtype_to_howto	coff_tic6x_rtype_to_howto
 
 #ifndef bfd_pe_print_pdata
-#define bfd_pe_print_pdata  NULL
+#define bfd_pe_print_pdata	NULL
 #endif
 
 #include "coffcode.h"
 
-/* Add to howto to get absolute/sect-relative version.  */
-#define HOWTO_BANK      6
-static const reloc_howto_type tic6x_howto_table[] =
+static bfd_reloc_status_type
+tic6x_relocation(
+    bfd *abfd ATTRIBUTE_UNUSED,
+    arelent *reloc_entry,
+    asymbol *symbol ATTRIBUTE_UNUSED,
+    void * data ATTRIBUTE_UNUSED,
+    asection *input_section,
+    bfd *output_bfd,
+    char **error_message ATTRIBUTE_UNUSED)
 {
-//    HOWTO(R_RELWORD,     0,  2, 16, FALSE, 0, complain_overflow_signed,   tic4x_relocation, "RELWORD",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-//    HOWTO(R_REL24,   0,  2, 24, FALSE, 0, complain_overflow_bitfield, tic4x_relocation, "REL24",     TRUE, 0x00ffffff, 0x00ffffff, FALSE),
-//    HOWTO(R_RELLONG,     0,  2, 32, FALSE, 0, complain_overflow_dont,     tic4x_relocation, "RELLONG",   TRUE, 0xffffffff, 0xffffffff, FALSE),
-//    HOWTO(R_PCRWORD,     0,  2, 16, TRUE,  0, complain_overflow_signed,   tic4x_relocation, "PCRWORD",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-//    HOWTO(R_PCR24,   0,  2, 24, TRUE,  0, complain_overflow_signed,   tic4x_relocation, "PCR24",     TRUE, 0x00ffffff, 0x00ffffff, FALSE),
-//    HOWTO(R_PARTLS16,    0,  2, 16, FALSE, 0, complain_overflow_dont,     tic4x_relocation, "PARTLS16",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-//    HOWTO(R_PARTMS8,    16,  2, 16, FALSE, 0, complain_overflow_dont,     tic4x_relocation, "PARTMS8",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-//    HOWTO(R_RELWORD,     0,  2, 16, FALSE, 0, complain_overflow_signed,   tic4x_relocation, "ARELWORD",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-//    HOWTO(R_REL24,   0,  2, 24, FALSE, 0, complain_overflow_signed,   tic4x_relocation, "AREL24",    TRUE, 0x00ffffff, 0x00ffffff, FALSE),
-//    HOWTO(R_RELLONG,     0,  2, 32, FALSE, 0, complain_overflow_signed,   tic4x_relocation, "ARELLONG",  TRUE, 0xffffffff, 0xffffffff, FALSE),
-//    HOWTO(R_PCRWORD,     0,  2, 16, TRUE,  0, complain_overflow_signed,   tic4x_relocation, "APCRWORD",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-//    HOWTO(R_PCR24,   0,  2, 24, TRUE,  0, complain_overflow_signed,   tic4x_relocation, "APCR24",    TRUE, 0x00ffffff, 0x00ffffff, FALSE),
-//    HOWTO(R_PARTLS16,    0,  2, 16, FALSE, 0, complain_overflow_dont,     tic4x_relocation, "APARTLS16", TRUE, 0x0000ffff, 0x0000ffff, FALSE),
-//    HOWTO(R_PARTMS8,    16,  2, 16, FALSE, 0, complain_overflow_dont,     tic4x_relocation, "APARTMS8",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    if (output_bfd != (bfd *)NULL)
+    {
+        /* This is a partial relocation, and we want to apply the
+ 	     * relocation to the reloc entry rather than the raw data.
+ 	     * Modify the reloc inplace to reflect what we now know.  */
+        reloc_entry->address += input_section->output_offset;
+        return bfd_reloc_ok;
+    }
+    else
+    {
+        return bfd_reloc_continue;
+    }
+}
+
+reloc_howto_type tic6x_howto_table[] =
+{
+    HOWTO(R_RELWORD,	 0,  2, 16, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "RELWORD",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    HOWTO(R_REL24,	 0,  2, 24, FALSE, 0, complain_overflow_bitfield, tic6x_relocation, "REL24",     TRUE, 0x00ffffff, 0x00ffffff, FALSE),
+    HOWTO(R_RELLONG,	 0,  2, 32, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "RELLONG",   TRUE, 0xffffffff, 0xffffffff, FALSE),
+    HOWTO(R_PCRWORD,	 0,  2, 16, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "PCRWORD",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    HOWTO(R_PCR24,	 0,  2, 24, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "PCR24",     TRUE, 0x00ffffff, 0x00ffffff, FALSE),
+    HOWTO(R_PARTLS16,	 0,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "PARTLS16",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    HOWTO(R_PARTMS8,	16,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "PARTMS8",   TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    HOWTO(R_RELWORD,	 0,  2, 16, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "ARELWORD",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    HOWTO(R_REL24,	 0,  2, 24, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "AREL24",    TRUE, 0x00ffffff, 0x00ffffff, FALSE),
+    HOWTO(R_RELLONG,	 0,  2, 32, FALSE, 0, complain_overflow_signed,   tic6x_relocation, "ARELLONG",  TRUE, 0xffffffff, 0xffffffff, FALSE),
+    HOWTO(R_PCRWORD,	 0,  2, 16, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "APCRWORD",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    HOWTO(R_PCR24,	 0,  2, 24, TRUE,  0, complain_overflow_signed,   tic6x_relocation, "APCR24",    TRUE, 0x00ffffff, 0x00ffffff, FALSE),
+    HOWTO(R_PARTLS16,	 0,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "APARTLS16", TRUE, 0x0000ffff, 0x0000ffff, FALSE),
+    HOWTO(R_PARTMS8,	16,  2, 16, FALSE, 0, complain_overflow_dont,     tic6x_relocation, "APARTMS8",  TRUE, 0x0000ffff, 0x0000ffff, FALSE),
 };
 #define HOWTO_SIZE (sizeof(tic6x_howto_table) / sizeof(tic6x_howto_table[0]))
 
+#undef coff_bfd_reloc_type_lookup
+#define coff_bfd_reloc_type_lookup tic6x_coff_reloc_type_lookup
+#undef coff_bfd_reloc_name_lookup
+#define coff_bfd_reloc_name_lookup tic6x_coff_reloc_name_lookup
+
+/* For the case statement use the code values used tc_gen_reloc (defined in
+ * bfd/reloc.c) to map to the howto table entries.  */
+
+static reloc_howto_type *
+tic6x_coff_reloc_type_lookup(
+    bfd *abfd ATTRIBUTE_UNUSED,
+    bfd_reloc_code_real_type code)
+{
+    unsigned int type;
+    unsigned int i;
+
+    switch (code)
+    {
+        case BFD_RELOC_32:		type = R_RELLONG; break;
+        case BFD_RELOC_24:		type = R_REL24; break;
+        case BFD_RELOC_16:		type = R_RELWORD; break;
+        case BFD_RELOC_24_PCREL:	type = R_PCR24; break;
+        case BFD_RELOC_16_PCREL:	type = R_PCRWORD; break;
+        case BFD_RELOC_HI16:	type = R_PARTMS8; break;
+        case BFD_RELOC_LO16:	type = R_PARTLS16; break;
+        default:
+            return NULL;
+    }
+
+    for (i = 0; i < HOWTO_SIZE; i++)
+    {
+        if (tic6x_howto_table[i].type == type)
+        {
+	        return tic6x_howto_table + i;
+	    }
+    }
+
+    return NULL;
+}
+
+static reloc_howto_type *
+tic6x_coff_reloc_name_lookup(
+    bfd *abfd ATTRIBUTE_UNUSED,
+    const char *r_name)
+{
+    unsigned int i;
+
+    for (i = 0; i < HOWTO_SIZE; i++)
+    {
+        if (tic6x_howto_table[i].name != NULL
+	        && strcasecmp (tic6x_howto_table[i].name, r_name) == 0)
+	    {
+            return &tic6x_howto_table[i];
+        }
+    }
+
+    return NULL;
+}
+
+/* Code to turn a r_type into a howto ptr, uses the above howto table.
+ * Called after some initial checking by the tic6x_rtype_to_howto fn
+ * below.  */
 static void
 tic6x_lookup_howto(
-    arelent * const internal,
-    struct internal_reloc const * const dst)
+    arelent *internal,
+    struct internal_reloc *dst)
 {
     unsigned int i;
     int bank = (dst->r_symndx == -1) ? HOWTO_BANK : 0;
@@ -83,11 +202,10 @@ tic6x_lookup_howto(
     for (i = 0; i < HOWTO_SIZE; i++)
     {
         if (tic6x_howto_table[i].type == dst->r_type)
-        {
-            internal->howto = tic6x_howto_table + i + bank;
-
-            return;
-        }
+	    {
+	        internal->howto = tic6x_howto_table + i + bank;
+	        return;
+	    }
     }
 
     (*_bfd_error_handler)(_("Unrecognized reloc type 0x%x"),
@@ -95,13 +213,38 @@ tic6x_lookup_howto(
     abort();
 }
 
+static reloc_howto_type *
+coff_tic6x_rtype_to_howto(
+    bfd *abfd ATTRIBUTE_UNUSED,
+    asection *sec,
+    struct internal_reloc *rel,
+    struct coff_link_hash_entry *h ATTRIBUTE_UNUSED,
+    struct internal_syment *sym ATTRIBUTE_UNUSED,
+    bfd_vma *addendp)
+{
+    arelent genrel;
+
+    if (rel->r_symndx == -1 && addendp != NULL)
+    {
+        /* This is a TI "internal relocation", which means that the relocation
+         * amount is the amount by which the current section is being relocated
+         * in the output section.  */
+        *addendp = (sec->output_section->vma + sec->output_offset) - sec->vma;
+    }
+
+    tic6x_lookup_howto(&genrel, rel);
+
+    return genrel.howto;
+}
+
+
 static void
 tic6x_reloc_processing(
-    arelent * const relent,
-    struct internal_reloc const * const reloc,
-    asymbol ** const symbols,
-    bfd * const abfd,
-    asection const * const section)
+    arelent *relent,
+    struct internal_reloc *reloc,
+    asymbol **symbols,
+    bfd *abfd,
+    asection *section)
 {
     asymbol *ptr;
 
@@ -113,14 +256,13 @@ tic6x_reloc_processing(
         {
             (*_bfd_error_handler)
                 (_("%s: warning: illegal symbol index %ld in relocs"),
-                    bfd_get_filename (abfd), reloc->r_symndx);
+                bfd_get_filename (abfd), reloc->r_symndx);
             relent->sym_ptr_ptr = bfd_abs_section_ptr->symbol_ptr_ptr;
             ptr = NULL;
         }
         else
         {
-            relent->sym_ptr_ptr = (symbols
-                + obj_convert (abfd)[reloc->r_symndx]);
+            relent->sym_ptr_ptr = (symbols + obj_convert (abfd)[reloc->r_symndx]);
             ptr = *(relent->sym_ptr_ptr);
         }
     }
@@ -131,11 +273,11 @@ tic6x_reloc_processing(
     }
 
     /* The symbols definitions that we have read in have been relocated
-     as if their sections started at 0.  But the offsets refering to
-     the symbols in the raw data have not been modified, so we have to
-     have a negative addend to compensate.
-
-     Note that symbols which used to be common must be left alone.  */
+     * as if their sections started at 0.  But the offsets refering to
+     * the symbols in the raw data have not been modified, so we have to
+     * have a negative addend to compensate.
+     *
+     * Note that symbols which used to be common must be left alone.  */
 
     /* Calculate any reloc addend by looking at the symbol.  */
     CALC_ADDEND(abfd, ptr, *reloc, relent);
@@ -147,53 +289,22 @@ tic6x_reloc_processing(
     tic6x_lookup_howto(relent, reloc);
 }
 
-const bfd_target bfd_coff2_tic6x_coff_le_vec =
-{
-    "coff2-c6x",    /* name */
-    bfd_target_coff_flavour,
-    BFD_ENDIAN_BIG,		/* data byte order is big */
-    BFD_ENDIAN_LITTLE,		/* header byte order is little */
 
-    (HAS_RELOC | EXEC_P |		/* object flags */
-        HAS_LINENO | HAS_DEBUG |
-        HAS_SYMS | HAS_LOCALS | WP_TEXT),
+/* TI COFF v0, DOS tools (little-endian headers).  */
+CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff0_tic6x_coff_le_vec, "bfd_coff0_tic6x_coff_le_vec", HAS_LOAD_PAGE, 0, '_', NULL, &ticoff0_swap_table);
 
-        (SEC_HAS_CONTENTS | SEC_ALLOC | SEC_LOAD | SEC_RELOC), /* section flags */
-        '_',				/* leading symbol underscore */
-        '/',				/* ar_pad_char */
-        15,				/* ar_max_namelen */
-        0,				/* match priority.  */
-        bfd_getb64, bfd_getb_signed_64, bfd_putb64,
-        bfd_getb32, bfd_getb_signed_32, bfd_putb32,
-        bfd_getb16, bfd_getb_signed_16, bfd_putb16,	/* data */
-        bfd_getl64, bfd_getl_signed_64, bfd_putl64,
-        bfd_getl32, bfd_getl_signed_32, bfd_putl32,
-        bfd_getl16, bfd_getl_signed_16, bfd_putl16,	/* hdrs */
+/* TI COFF v0, SPARC tools (big-endian headers).  */
+CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff0_tic6x_coff_be_vec, "bfd_coff0_tic6x_coff_be_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff0_tic6x_coff_le_vec, &ticoff0_swap_table);
 
-        {
-            _bfd_dummy_target, coff_object_p,	/* bfd_check_format */
-            bfd_generic_archive_p, _bfd_dummy_target
-        },
-        {
-            bfd_false, coff_mkobject, _bfd_generic_mkarchive,	/* bfd_set_format */
-            bfd_false
-        },
-        {
-            bfd_false, coff_write_object_contents,	/* bfd_write_contents */
-            _bfd_write_archive_contents, bfd_false
-        },
+/* TI COFF v1, DOS tools (little-endian headers).  */
+CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff1_tic6x_coff_le_vec, "bfd_coff1_tic6x_coff_le_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff0_tic6x_coff_be_vec, &ticoff1_swap_table);
 
-        BFD_JUMP_TABLE_GENERIC (coff),
-        BFD_JUMP_TABLE_COPY (coff),
-        BFD_JUMP_TABLE_CORE (_bfd_nocore),
-        BFD_JUMP_TABLE_ARCHIVE (_bfd_archive_coff),
-        BFD_JUMP_TABLE_SYMBOLS (coff),
-        BFD_JUMP_TABLE_RELOCS (coff),
-        BFD_JUMP_TABLE_WRITE (coff),
-        BFD_JUMP_TABLE_LINK (coff),
-        BFD_JUMP_TABLE_DYNAMIC (_bfd_nodynamic),
+/* TI COFF v1, SPARC tools (big-endian headers).  */
+CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff1_tic6x_coff_be_vec, "bfd_coff1_tic6x_coff_be_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff1_tic6x_coff_le_vec, &ticoff1_swap_table);
 
-        NULL,
+/* TI COFF v2, TI DOS tools output (little-endian headers).  */
+CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff2_tic6x_coff_le_vec, "bfd_coff2_tic6x_coff_le_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff1_tic6x_coff_be_vec, COFF_SWAP_TABLE);
 
-        COFF_SWAP_TABLE
-};
+/* TI COFF v2, TI SPARC tools output (big-endian headers).  */
+CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff2_tic6x_coff_be_vec, "bfd_coff2_tic6x_coff_be_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff2_tic6x_coff_le_vec, COFF_SWAP_TABLE);
+
