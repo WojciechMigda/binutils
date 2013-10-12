@@ -21,6 +21,8 @@
 #ifndef COFF_TIC6X_H
 #define COFF_TIC6X_H
 
+#include "bfd.h"
+
 #define TIC6X_TARGET_ID 	0x0099
 /* Octets per byte, as a power of two.  */
 #define TI_TARGET_ID 		TIC6X_TARGET_ID
@@ -31,9 +33,15 @@
 /* We use COFF2.  */
 #define TICOFF_DEFAULT_MAGIC 	TICOFF2MAGIC 
 
+#define COFF_LONG_SECTION_NAMES
+
+static inline
+unsigned long TICOFF_TARGET_MACHINE_GET(const unsigned short in_f_flags)
+{
+    return TICOFF_TARGET_ARCH;
+}
 #if 0
-#define TICOFF_TARGET_MACHINE_GET(FLAGS) \
-  (((FLAGS) & F_VERS) ? bfd_mach_tic4x : bfd_mach_tic3x)
+#define TICOFF_TARGET_MACHINE_GET(FLAGS) (TICOFF_TARGET_ARCH)
 
 #define TICOFF_TARGET_MACHINE_SET(FLAGSP, MACHINE)	\
   do							\
