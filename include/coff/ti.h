@@ -139,6 +139,7 @@ struct external_filehdr
 #define F_20            0x10    /* file built for TMS320C2x devices */
 #define F_25            0x20    /* file built for TMS320C2x/C5x devices */
 #define F_LENDIAN       0x0100  /* 16 bits/word, LSB first */
+#define F_BIG           0x0200  /* target is big-endian (C6000, MSP430, TMS470 only) */
 #define F_SYMMERGE      0x1000  /* duplicate symbols were removed */
 
 /********************** OPTIONAL HEADER **********************/
