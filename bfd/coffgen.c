@@ -97,6 +97,31 @@ make_a_section_from_file (bfd *abfd,
 	  strcpy (name, strings);
 	}
     }
+#if TI_TARGET_ID == TIC6X_TARGET_ID
+    else if (bfd_coff_long_section_names (abfd))
+    {
+        //if (hdr->s_name[0] == 0x00)
+        if (H_GET_32(abfd, hdr->s_name) == 0x00000000)
+        {
+            //printf("dupa\n");
+            const char *strings;
+            long    strindex = H_GET_32(abfd, &hdr->s_name[4]);
+
+            strings = _bfd_coff_read_string_table(abfd);
+            if (NULL == strings)
+            {
+                return FALSE;
+            }
+            strings += strindex;
+            name = (char *)bfd_alloc(abfd, (bfd_size_type)strlen(strings) + 1);
+            if (NULL == name)
+            {
+                return FALSE;
+            }
+	        strcpy(name, strings);
+        }
+    }
+#endif
 
   if (name == NULL)
     {
