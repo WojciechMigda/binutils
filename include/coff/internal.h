@@ -846,6 +846,7 @@ struct internal_reloc
 #define R_TI_SSTFLD    0x4010
 #define R_TI_PUSH      0x4011
 #define R_TI_PUSHUK    0x4013
+#define R_TI_XSTFLD    0x4016
 /* end TI C6x */
 
 #endif /* GNU_COFF_INTERNAL_H */
