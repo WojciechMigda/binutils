@@ -435,7 +435,8 @@ case ${generic_target} in
   tic30-*-*coff*)			fmt=coff bfd_gas=yes ;;
   tic4x-*-* | c4x-*-*)			fmt=coff bfd_gas=yes ;;
   tic54x-*-* | c54x*-*-*)		fmt=coff bfd_gas=yes need_libm=yes;;
-  tic6x-*-*)				fmt=elf ;;
+  tic6x-*-coff)				fmt=coff bfd_gas=yes ;;
+  tic6x-*-elf)				fmt=elf ;;
 
   tilepro-*-* | tilegx*-*-*)		fmt=elf ;;
 
