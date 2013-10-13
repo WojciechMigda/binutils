@@ -36,7 +36,7 @@
 #define COFF_LONG_SECTION_NAMES
 
 static inline
-unsigned long TICOFF_TARGET_MACHINE_GET(const unsigned short in_f_flags)
+unsigned long TICOFF_TARGET_MACHINE_GET(const unsigned short in_f_flags ATTRIBUTE_UNUSED)
 {
     return TICOFF_TARGET_ARCH;
 }
