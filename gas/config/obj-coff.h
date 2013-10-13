@@ -149,6 +149,11 @@
 #define TARGET_FORMAT "coff1-c54x"
 #endif
 
+#ifdef TC_TIC6X
+#include "coff/tic6x.h"
+//#define TARGET_FORMAT "coff2-c6x"
+#endif
+
 #ifdef TC_MCORE
 #include "coff/mcore.h"
 #ifndef TARGET_FORMAT
