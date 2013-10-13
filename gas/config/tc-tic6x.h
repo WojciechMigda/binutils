@@ -33,9 +33,14 @@
 #define TC_KEEP_OPERAND_SPACES 1
 
 #define TARGET_ARCH 	bfd_arch_tic6x
+
+#ifdef OBJ_COFF
+#define TARGET_FORMAT (target_big_endian ? "coff2-tic6x-be" : "coff2-tic6x-le")
+#else
 #define TARGET_FORMAT	(target_big_endian	\
 			 ? "elf32-tic6x-be"	\
 			 : "elf32-tic6x-le")
+#endif
 
 typedef struct tic6x_label_list
 {
