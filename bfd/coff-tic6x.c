@@ -215,6 +215,14 @@ tic6x_lookup_howto(
     unsigned int i;
     int bank = (dst->r_symndx == -1) ? HOWTO_BANK : 0;
 
+#if 0
+    if (dst->r_symndx == 65535)
+    {
+        (*_bfd_error_handler)(_("tic6x_lookup_howto: Internal reloc 65535 for type 0x%x vaddr 0x%x"),
+            (unsigned int)dst->r_type, dst->r_vaddr);
+    }
+#endif
+
     for (i = 0; i < HOWTO_SIZE; i++)
     {
         if (tic6x_howto_table[i].type == dst->r_type)
@@ -265,6 +273,16 @@ tic6x_reloc_processing(
     asymbol *ptr;
 
     relent->address = reloc->r_vaddr;
+
+#if 0
+    if (reloc->r_type & 0x4000)
+    {
+        /* relocation expression */
+        (*_bfd_error_handler)
+            (_("tic6x_reloc_processing: Relocation expression:\n  vaddr: 0x%08X symndx: 0x%04X type: 0x%04X"),
+                reloc->r_vaddr, reloc->r_symndx, reloc->r_type);
+    }
+#endif
 
     if (reloc->r_symndx != -1)
     {
