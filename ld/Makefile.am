@@ -450,6 +450,7 @@ ALL_EMULATION_SOURCES = \
 	etic3xcoff_onchip.c \
 	etic4xcoff.c \
 	etic54xcoff.c \
+	etic6xcoff.c \
 	etic80coff.c \
 	ev850.c \
 	evanilla.c \
@@ -1913,6 +1914,9 @@ etic4xcoff.c: $(srcdir)/emulparams/tic4xcoff.sh \
 etic54xcoff.c: $(srcdir)/emulparams/tic54xcoff.sh \
   $(srcdir)/emultempl/ticoff.em $(srcdir)/scripttempl/tic54xcoff.sc ${GEN_DEPENDS}
 	${GENSCRIPTS} tic54xcoff "$(tdir_tic54xcoff)"
+etic6xcoff.c: $(srcdir)/emulparams/tic6xcoff.sh \
+  $(srcdir)/emultempl/ticoff.em $(srcdir)/scripttempl/tic6xcoff.sc ${GEN_DEPENDS}
+	${GENSCRIPTS} tic6xcoff "$(tdir_tic6xcoff)"
 etic80coff.c: $(srcdir)/emulparams/tic80coff.sh \
   $(srcdir)/emultempl/generic.em $(srcdir)/scripttempl/tic80coff.sc ${GEN_DEPENDS}
 	${GENSCRIPTS} tic80coff "$(tdir_tic80coff)"
