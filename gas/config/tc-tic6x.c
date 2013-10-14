@@ -208,6 +208,7 @@ static tic6x_unwind_info *tic6x_get_unwind (void)
   return unwind;
 }
 
+#ifdef OBJ_ELF
 /* Update the selected architecture based on ARCH, giving an error if
    ARCH is an invalid value.  Does not call tic6x_update_features; the
    caller must do that if necessary.  */
@@ -232,6 +233,7 @@ tic6x_use_arch (const char *arch)
 
   as_bad (_("unknown architecture '%s'"), arch);
 }
+#endif
 
 /* Table of supported -mpid arguments.  */
 typedef struct
@@ -271,8 +273,10 @@ md_parse_option (int c, char *arg)
   switch (c)
     {
     case OPTION_MARCH:
+#ifdef OBJ_ELF
       tic6x_use_arch (arg);
       break;
+#endif
 
     case OPTION_MBIG_ENDIAN:
       target_big_endian = 1;
@@ -371,6 +375,7 @@ tic6x_after_parse_args (void)
   tic6x_update_features ();
 }
 
+#ifdef OBJ_ELF
 /* Parse a .cantunwind directive.  */
 static void
 s_tic6x_cantunwind (int ignored ATTRIBUTE_UNUSED)
@@ -395,7 +400,9 @@ s_tic6x_cantunwind (int ignored ATTRIBUTE_UNUSED)
 
   unwind->personality_index = -2;
 }
+#endif
 
+#ifdef OBJ_ELF
 /* Parse a .handlerdata directive.  */
 static void
 s_tic6x_handlerdata (int ignored ATTRIBUTE_UNUSED)
@@ -422,7 +429,9 @@ s_tic6x_handlerdata (int ignored ATTRIBUTE_UNUSED)
 
   tic6x_output_unwinding (TRUE);
 }
+#endif
 
+#ifdef OBJ_ELF
 /* Parse a .endp directive.  */
 static void
 s_tic6x_endp (int ignored ATTRIBUTE_UNUSED)
@@ -443,7 +452,9 @@ s_tic6x_endp (int ignored ATTRIBUTE_UNUSED)
   unwind->table_entry = NULL;
   unwind->data_bytes = 0;
 }
+#endif
 
+#ifdef OBJ_ELF
 /* Parse a .personalityindex directive.  */
 static void
 s_tic6x_personalityindex (int ignored ATTRIBUTE_UNUSED)
@@ -468,7 +479,9 @@ s_tic6x_personalityindex (int ignored ATTRIBUTE_UNUSED)
 
   demand_empty_rest_of_line ();
 }
+#endif
 
+#ifdef OBJ_ELF
 static void
 s_tic6x_personality (int ignored ATTRIBUTE_UNUSED)
 {
@@ -485,7 +498,9 @@ s_tic6x_personality (int ignored ATTRIBUTE_UNUSED)
   *p = c;
   demand_empty_rest_of_line ();
 }
+#endif
 
+#ifdef OBJ_ELF
 /* Parse a .arch directive.  */
 static void
 s_tic6x_arch (int ignored ATTRIBUTE_UNUSED)
@@ -504,7 +519,9 @@ s_tic6x_arch (int ignored ATTRIBUTE_UNUSED)
   *input_line_pointer = c;
   demand_empty_rest_of_line ();
 }
+#endif
 
+#ifdef OBJ_ELF
 /* Parse a .ehtype directive.  */
 
 static void
@@ -542,16 +559,20 @@ s_tic6x_ehtype (int ignored ATTRIBUTE_UNUSED)
 
   demand_empty_rest_of_line ();
 }
+#endif
 
 /* Parse a .nocmp directive.  */
 
+#ifdef OBJ_ELF
 static void
 s_tic6x_nocmp (int ignored ATTRIBUTE_UNUSED)
 {
   seg_info (now_seg)->tc_segment_info_data.nocmp = TRUE;
   demand_empty_rest_of_line ();
 }
+#endif
 
+#ifdef OBJ_ELF
 /* .scomm pseudo-op handler.
 
    This is a new pseudo-op to handle putting objects in .scommon.
@@ -683,7 +704,9 @@ s_tic6x_scomm (int ignore ATTRIBUTE_UNUSED)
 
   demand_empty_rest_of_line ();
 }
+#endif
 
+#ifdef OBJ_ELF
 /* Track for each attribute whether it has been set explicitly (and so
    should not have a default value set by the assembler).  */
 static bfd_boolean tic6x_attributes_set_explicitly[NUM_KNOWN_OBJ_ATTRIBUTES];
@@ -698,6 +721,7 @@ s_tic6x_c6xabi_attribute (int ignored ATTRIBUTE_UNUSED)
   if (tag < NUM_KNOWN_OBJ_ATTRIBUTES)
     tic6x_attributes_set_explicitly[tag] = TRUE;
 }
+#endif
 
 typedef struct
 {
@@ -728,6 +752,7 @@ tic6x_convert_symbolic_attribute (const char *name)
 
 const pseudo_typeS md_pseudo_table[] =
   {
+#ifdef OBJ_ELF
     { "arch", s_tic6x_arch, 0 },
     { "c6xabi_attribute", s_tic6x_c6xabi_attribute, 0 },
     { "nocmp", s_tic6x_nocmp, 0 },
@@ -739,6 +764,7 @@ const pseudo_typeS md_pseudo_table[] =
     { "personalityindex", s_tic6x_personalityindex, 0 },
     { "personality", s_tic6x_personality, 0 },
     { "cantunwind", s_tic6x_cantunwind, 0 },
+#endif
     { 0, 0, 0 }
   };
 
@@ -1004,7 +1030,9 @@ tic6x_cleanup (void)
 void
 tic6x_init_after_args (void)
 {
+#ifdef OBJ_ELF
   elf32_tic6x_set_use_rela_p (stdoutput, tic6x_generate_rela);
+#endif
 }
 
 /* Free LIST of labels (possibly NULL).  */
@@ -4363,11 +4391,13 @@ tic6x_frag_init (fragS *fragp)
 static void
 tic6x_set_attribute_int (int tag, int value)
 {
+#ifdef OBJ_ELF
   if (tag < 1
       || tag >= NUM_KNOWN_OBJ_ATTRIBUTES)
     abort ();
   if (!tic6x_attributes_set_explicitly[tag])
     bfd_elf_add_proc_attr_int (stdoutput, tag, value);
+#endif
 }
 
 /* Set object attributes deduced from the input file and command line
@@ -4576,6 +4606,7 @@ tic6x_frame_initial_instructions (void)
   cfi_add_CFA_def_cfa (31, 0);
 }
 
+#ifdef OBJ_ELF
 /* Start an exception table entry.  If idx is nonzero this is an index table
    entry.  */
 
@@ -4654,6 +4685,7 @@ tic6x_start_unwind_section (const segT text_seg, int idx)
 
   seg_info (now_seg)->tc_segment_info_data.text_unwind = unwind;
 }
+#endif
 
 
 static const int
