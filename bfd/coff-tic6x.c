@@ -325,20 +325,20 @@ tic6x_reloc_processing(
 
 
 /* TI COFF v0, DOS tools (little-endian headers).  */
-CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff0_tic6x_coff_le_vec, "bfd_coff0_tic6x_coff_le_vec", HAS_LOAD_PAGE, 0, '_', NULL, &ticoff0_swap_table);
+CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff0_tic6x_coff_le_vec, "coff0-tic6x-le", HAS_LOAD_PAGE, 0, '_', NULL, &ticoff0_swap_table);
 
 /* TI COFF v0, SPARC tools (big-endian headers).  */
-CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff0_tic6x_coff_be_vec, "bfd_coff0_tic6x_coff_be_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff0_tic6x_coff_le_vec, &ticoff0_swap_table);
+CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff0_tic6x_coff_be_vec, "coff0-tic6x-be", HAS_LOAD_PAGE, 0, '_', &bfd_coff0_tic6x_coff_le_vec, &ticoff0_swap_table);
 
 /* TI COFF v1, DOS tools (little-endian headers).  */
-CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff1_tic6x_coff_le_vec, "bfd_coff1_tic6x_coff_le_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff0_tic6x_coff_be_vec, &ticoff1_swap_table);
+CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff1_tic6x_coff_le_vec, "coff1-tic6x-le", HAS_LOAD_PAGE, 0, '_', &bfd_coff0_tic6x_coff_be_vec, &ticoff1_swap_table);
 
 /* TI COFF v1, SPARC tools (big-endian headers).  */
-CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff1_tic6x_coff_be_vec, "bfd_coff1_tic6x_coff_be_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff1_tic6x_coff_le_vec, &ticoff1_swap_table);
+CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff1_tic6x_coff_be_vec, "coff1-tic6x-be", HAS_LOAD_PAGE, 0, '_', &bfd_coff1_tic6x_coff_le_vec, &ticoff1_swap_table);
 
 /* TI COFF v2, TI DOS tools output (little-endian headers).  */
-CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff2_tic6x_coff_le_vec, "bfd_coff2_tic6x_coff_le_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff1_tic6x_coff_be_vec, COFF_SWAP_TABLE);
+CREATE_LITTLE_COFF_TARGET_VEC(bfd_coff2_tic6x_coff_le_vec, "coff2-tic6x-le", HAS_LOAD_PAGE, 0, '_', &bfd_coff1_tic6x_coff_be_vec, COFF_SWAP_TABLE);
 
 /* TI COFF v2, TI SPARC tools output (big-endian headers).  */
-CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff2_tic6x_coff_be_vec, "bfd_coff2_tic6x_coff_be_vec", HAS_LOAD_PAGE, 0, '_', &bfd_coff2_tic6x_coff_le_vec, COFF_SWAP_TABLE);
+CREATE_BIGHDR_COFF_TARGET_VEC(bfd_coff2_tic6x_coff_be_vec, "coff2-tic6x-be", HAS_LOAD_PAGE, 0, '_', &bfd_coff2_tic6x_coff_le_vec, COFF_SWAP_TABLE);
 
