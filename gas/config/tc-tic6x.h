@@ -35,6 +35,7 @@
 #define TARGET_ARCH 	bfd_arch_tic6x
 
 #ifdef OBJ_COFF
+/* values correspoding to those defined in bfd/coff-tic6x.c */
 #define TARGET_FORMAT (target_big_endian ? "coff2-tic6x-be" : "coff2-tic6x-le")
 #else
 #define TARGET_FORMAT	(target_big_endian	\
