@@ -763,6 +763,8 @@ const pseudo_typeS md_pseudo_table[] =
     { "personalityindex", s_tic6x_personalityindex, 0 },
     { "personality", s_tic6x_personality, 0 },
     { "cantunwind", s_tic6x_cantunwind, 0 },
+#else
+    {"ref", s_ignore, 0},
 #endif
     { 0, 0, 0 }
   };
@@ -3300,26 +3302,26 @@ md_assemble (char *str)
 	  != 32)
 	continue;
       if (!(tic6x_opcode_table[opc->id].isa_variants & tic6x_features))
-	this_opc_arch_ok = FALSE;
+        this_opc_arch_ok = FALSE;
       if (tic6x_opcode_table[opc->id].func_unit != func_unit_base)
-	this_opc_fu_ok = FALSE;
+        this_opc_fu_ok = FALSE;
       if (func_unit_side == 1
 	  && (tic6x_opcode_table[opc->id].flags & TIC6X_FLAG_SIDE_B_ONLY))
-	this_opc_fu_ok = FALSE;
+	    this_opc_fu_ok = FALSE;
       if (func_unit_cross
 	  && (tic6x_opcode_table[opc->id].flags & TIC6X_FLAG_NO_CROSS))
-	this_opc_fu_ok = FALSE;
+	    this_opc_fu_ok = FALSE;
       if (!func_unit_data_side
 	  && (tic6x_opcode_table[opc->id].flags
 	      & (TIC6X_FLAG_LOAD | TIC6X_FLAG_STORE)))
-	this_opc_fu_ok = FALSE;
+	    this_opc_fu_ok = FALSE;
       if (func_unit_data_side
 	  && !(tic6x_opcode_table[opc->id].flags
 	       & (TIC6X_FLAG_LOAD | TIC6X_FLAG_STORE)))
-	this_opc_fu_ok = FALSE;
+	    this_opc_fu_ok = FALSE;
       if (func_unit_data_side == 1
 	  && (tic6x_opcode_table[opc->id].flags & TIC6X_FLAG_SIDE_T2_ONLY))
-	this_opc_fu_ok = FALSE;
+	    this_opc_fu_ok = FALSE;
       if (this_opc_arch_ok)
 	ok_this_arch = TRUE;
       if (this_opc_fu_ok)
