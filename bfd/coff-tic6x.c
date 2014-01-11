@@ -170,6 +170,9 @@ tic6x_coff_reloc_type_lookup(
 //        case BFD_RELOC_16_PCREL:	type = R_PCRWORD; break;
 //        case BFD_RELOC_HI16:	type = R_PARTMS8; break;
 //        case BFD_RELOC_LO16:	type = R_PARTLS16; break;
+        case BFD_RELOC_C6000_ABS_L16: type = R_C60LO16; break;
+        case BFD_RELOC_C6000_ABS_H16: type = R_C60HI16; break;
+        case BFD_RELOC_C6000_PCR_S21: type = R_C60PCR21; break;
         default:
             return NULL;
     }
