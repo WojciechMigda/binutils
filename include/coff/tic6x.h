@@ -26,7 +26,7 @@
 #define TIC6X_TARGET_ID 	0x0099
 /* Octets per byte, as a power of two.  */
 #define TI_TARGET_ID 		TIC6X_TARGET_ID
-#define OCTETS_PER_BYTE_POWER 	2 
+#define OCTETS_PER_BYTE_POWER 	0 
 /* Add to howto to get absolute/sect-relative version.  */
 #define HOWTO_BANK 		6		
 #define TICOFF_TARGET_ARCH 	bfd_arch_tic6x
