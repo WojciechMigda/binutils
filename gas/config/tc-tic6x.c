@@ -29,6 +29,10 @@
 #include "elf/tic6x.h"
 #include "elf32-tic6x.h"
 
+#ifndef OBJ_ELF
+#include "tc-tic6x-vendor-attribute.h"
+#endif
+
 /* Truncate and sign-extend at 32 bits, so that building on a 64-bit
    host gives identical results to a 32-bit host.  */
 #define TRUNC(X)	((valueT) (X) & 0xffffffffU)
@@ -720,6 +724,12 @@ s_tic6x_c6xabi_attribute (int ignored ATTRIBUTE_UNUSED)
   if (tag < NUM_KNOWN_OBJ_ATTRIBUTES)
     tic6x_attributes_set_explicitly[tag] = TRUE;
 }
+#else
+static void
+s_tic6x_c6xabi_attribute (int ignored ATTRIBUTE_UNUSED)
+{
+  input_line_pointer = s_tic6x_coff_c6xabi_attribute(input_line_pointer);
+}
 #endif
 
 typedef struct
@@ -764,6 +774,7 @@ const pseudo_typeS md_pseudo_table[] =
     { "personality", s_tic6x_personality, 0 },
     { "cantunwind", s_tic6x_cantunwind, 0 },
 #else
+    {"c6xabi_attribute", s_tic6x_c6xabi_attribute, 0},
     {"ref", s_ignore, 0},
 #endif
     { 0, 0, 0 }
@@ -2098,7 +2109,7 @@ tic6x_fix_adjustable (fixS *fixP)
     case BFD_RELOC_C6000_PCR_H16:
     case BFD_RELOC_C6000_PCR_L16:
       return 0;
-      
+
     default:
       return 1;
     }
@@ -4714,18 +4725,18 @@ tic6x_start_unwind_section (const segT text_seg, int idx)
 
 
 static const int
-tic6x_unwind_frame_regs[TIC6X_NUM_UNWIND_REGS] = 
+tic6x_unwind_frame_regs[TIC6X_NUM_UNWIND_REGS] =
 /* A15 B15 B14 B13 B12 B11 B10  B3 A14 A13 A12 A11 A10.  */
   { 15, 31, 30, 29, 28, 27, 26, 19, 14, 13, 12, 11, 10 };
 
 /* Register save offsets for __c6xabi_push_rts.  */
 static const int
-tic6x_pop_rts_offset_little[TIC6X_NUM_UNWIND_REGS] = 
+tic6x_pop_rts_offset_little[TIC6X_NUM_UNWIND_REGS] =
 /* A15 B15 B14 B13 B12 B11 B10  B3 A14 A13 A12 A11 A10.  */
   { -1,  1,  0, -3, -4, -7, -8,-11, -2, -5, -6, -9,-10};
 
 static const int
-tic6x_pop_rts_offset_big[TIC6X_NUM_UNWIND_REGS] = 
+tic6x_pop_rts_offset_big[TIC6X_NUM_UNWIND_REGS] =
 /* A15 B15 B14 B13 B12 B11 B10  B3 A14 A13 A12 A11 A10.  */
   { -2,  1,  0, -4, -3, -8, -7,-12, -1, -6, -5,-10, -9};
 
@@ -5373,7 +5384,7 @@ tic6x_cfi_endproc (struct fde_entry *fde)
 	    continue;
 
 	  unwind->saved_reg_count++;
-	  /* Encoding uses 4 bits per word, so size of unwinding opcode data 
+	  /* Encoding uses 4 bits per word, so size of unwinding opcode data
 	     limits the save area size.  The exact cap will be figured out
 	     later due to overflow, the 0x800 here is just a quick sanity
 	     check to weed out obviously excessive offsets.  */
@@ -5408,3 +5419,6 @@ tic6x_cfi_endproc (struct fde_entry *fde)
   unwind->cfa_offset = cfa_offset;
   unwind->function_start = fde->start_address;
 }
+
+/* ughh */
+#include "tc-tic6x-vendor-attribute.c"
