@@ -71,7 +71,7 @@ typedef struct
   }
 stack;
 
-
+
 /* Stack stuff.  */
 
 static stack *
@@ -121,7 +121,7 @@ stack_pop (stack *st)
   st->pointer -= st->element_size;
   return st->data + st->pointer;
 }
-
+
 /* Maintain a list of the tagnames of the structures.  */
 
 static struct hash_control *tag_hash;
@@ -177,7 +177,7 @@ obj_coff_bss (int ignore ATTRIBUTE_UNUSED)
     s_lcomm (0);
 }
 
-#ifdef TE_PE
+#if defined TE_PE || defined TC_TIC6X
 /* Called from read.c:s_comm after we've parsed .comm symbol, size.
    Parse a possible alignment value.  */
 
@@ -381,7 +381,7 @@ static symbolS *line_fsym;
 #define clear_function()	(line_fsym = 0)
 #define set_function(F)		(line_fsym = (F), coff_add_linesym (F))
 
-
+
 void
 coff_obj_symbol_new_hook (symbolS *symbolP)
 {
@@ -414,7 +414,7 @@ coff_obj_symbol_clone_hook (symbolS *newsymP, symbolS *orgsymP)
   SF_SET (newsymP, SF_GET (orgsymP));
 }
 
-
+
 /* Handle .ln directives.  */
 
 static symbolS *current_lineno_sym;
@@ -1871,7 +1871,7 @@ const pseudo_typeS coff_pseudo_table[] =
   /* We accept the .bss directive for backward compatibility with
      earlier versions of gas.  */
   {"bss", obj_coff_bss, 0},
-#ifdef TE_PE
+#if defined TE_PE || TC_TIC6X
   /* PE provides an enhanced version of .comm with alignment.  */
   {"comm", obj_coff_comm, 0},
 #endif /* TE_PE */
@@ -1904,7 +1904,7 @@ const pseudo_typeS coff_pseudo_table[] =
 #endif
   {NULL, NULL, 0}
 };
-
+
 
 /* Support for a COFF emulation.  */
 
