@@ -3,6 +3,10 @@
 *.orig
 *.rej
 
+.cproject
+.project
+.settings
+
 *~
 .#*
 *#
